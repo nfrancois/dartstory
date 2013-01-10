@@ -17,10 +17,9 @@ main(){
   print('Listening for connections on $ip:$port');
 }
 
-_email(HttpRequest request, HttpResponse response){
-  print("email request");
-  var email = env["EMAIL"];
-  response.outputStream..writeString(email)
+_answer(HttpResponse response, String content){
+  print("Answer=$content");
+  response.outputStream..writeString(content)
                        ..close();
 }
 
@@ -28,9 +27,10 @@ _serveHandler(HttpRequest request, HttpResponse response){
   var query = request.queryParameters["q"];
   print("Query=$query");
   if(query == "Quelle est ton adresse email"){
-    _email(request, response);
+    _answer(response, env["EMAIL"]);
+  } else if(query == "Es tu abonne a la mailing list(OUI/NON)"){
+    _answer(response, env["MAILING_LIST"]);
   } else {
-    response.outputStream..writeString("Hello")
-                         ..close();   
+    _answer(response, "Hello");
   }
 }
