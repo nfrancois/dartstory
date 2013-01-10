@@ -1,6 +1,5 @@
 name:  DartStory
 description:  A dart version for CodeStory 2013
 
-#dependencies:
-#  js: any
-#  unittest: any
+dependencies:
+  unittest: { sdk: unittest }
