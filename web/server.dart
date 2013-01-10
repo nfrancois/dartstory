@@ -18,7 +18,7 @@ class DartStoryServer {
                             "Es tu abonne a la mailing list(OUI/NON)": env["MAILING_LIST"],
                             "Es tu heureux de participer(OUI/NON)" : "OUI",
                             "Es tu pret a recevoir une enonce au format markdown par http post(OUI/NON)" : "OUI",
-                            "Est ce que tu reponds toujours oui(OUI/NON)" : "OUI"
+                            "Est ce que tu reponds toujours oui(OUI/NON)" : "NON"
   };
  
   final int port;
@@ -40,20 +40,25 @@ class DartStoryServer {
     _server.close();
   }
   
-  _answer(HttpResponse response, String content){
+  _doAnswer(HttpResponse response, String content){
     print("Answer=$content");
     response.outputStream..writeString(content)
                          ..close();
   }
   
+  String _findAnswer(String query){
+    if(query != null && queryAnswers.containsKey(query)){
+      return queryAnswers[query];
+    } else {
+      return "@CodeStory with Dart";    
+    }    
+  }
+  
   _serveHandler(HttpRequest request, HttpResponse response){
     var query = request.queryParameters["q"];
-    print("Query=$query");
-    if(query != null && queryAnswers.containsKey(query)){
-      _answer(response, queryAnswers[query]);
-    } else {
-      _answer(response, "@CodeStory with Dart");    
-    }
+    String answer = _findAnswer(query);
+    print("Query=$query Answer=$answer");
+    _doAnswer(response,answer);
   }
 
 
