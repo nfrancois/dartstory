@@ -4,44 +4,55 @@ import "dart:io";
 
 var env = Platform.environment;
 
-HttpServer _server;
 
 main(){
-  startServer();
-}
-
-startServer(){
-  print('Starting....');
   var port = env['PORT'] == null ? 12345 : int.parse(env['PORT']);
-  var ip = "0.0.0.0";
-
-  _server = new HttpServer();
-  _server.defaultRequestHandler = _serveHandler; 
-  _server.listen(ip, port);
-
-
-  print('Listening for connections on $ip:$port');
+  var host = "0.0.0.0";
+  new DartStoryServer(host, port).startServer();
 }
 
-stopServer(){
-  print("Stopping...");
-  _server.close();
-}
-
-_answer(HttpResponse response, String content){
-  print("Answer=$content");
-  response.outputStream..writeString("$content\n")
-                       ..close();
-}
-
-_serveHandler(HttpRequest request, HttpResponse response){
-  var query = request.queryParameters["q"];
-  print("Query=$query");
-  if(query == "Quelle est ton adresse email"){
-    _answer(response, env["EMAIL"]);
-  } else if(query == "Es tu abonne a la mailing list(OUI/NON)"){
-    _answer(response, env["MAILING_LIST"]);
-  } else {
-    _answer(response, "Hello");
+class DartStoryServer {
+  
+  final Map queryAnswers = {
+                            "Quelle est ton adresse email" : env["EMAIL"],
+                            "Es tu abonne a la mailing list(OUI/NON)": env["MAILING_LIST"],
+                            "Es tu heureux de participer(OUI/NON)" : "OUI"
+  };
+ 
+  final int port;
+  final String host;
+  final HttpServer _server;
+  
+  DartStoryServer(this.host, this.port) : _server = new HttpServer();
+  
+  
+  startServer(){
+    print('Starting....');
+    _server..defaultRequestHandler = _serveHandler
+           ..listen(host, port);
+    print('Listening for connections on $host:$port');
   }
+  
+  stopServer(){
+    print("Stopping...");
+    _server.close();
+  }
+  
+  _answer(HttpResponse response, String content){
+    print("Answer=$content");
+    response.outputStream..writeString(content)
+                         ..close();
+  }
+  
+  _serveHandler(HttpRequest request, HttpResponse response){
+    var query = request.queryParameters["q"];
+    print("Query=$query");
+    if(query != null && queryAnswers.containsKey(query)){
+      _answer(response, queryAnswers[query]);
+    } else {
+      _answer(response, "@CodeStory with Dart");    
+    }
+  }
+
+
 }
