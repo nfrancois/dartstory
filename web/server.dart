@@ -30,7 +30,7 @@ stopServer(){
 
 _answer(HttpResponse response, String content){
   print("Answer=$content");
-  response.outputStream..writeString(content)
+  response.outputStream..writeString("$content\n")
                        ..close();
 }
 
