@@ -18,7 +18,8 @@ class DartStoryServer {
                             "Es tu abonne a la mailing list(OUI/NON)": env["MAILING_LIST"],
                             "Es tu heureux de participer(OUI/NON)" : "OUI",
                             "Es tu pret a recevoir une enonce au format markdown par http post(OUI/NON)" : "OUI",
-                            "Est ce que tu reponds toujours oui(OUI/NON)" : "NON"
+                            "Est ce que tu reponds toujours oui(OUI/NON)" : "NON",
+                            "As tu bien recu le premier enonce(OUI/NON)" : "OUI"
   };
  
   final int port;
@@ -31,6 +32,7 @@ class DartStoryServer {
   startServer(){
     print('Starting....');
     _server..defaultRequestHandler = _serveHandler
+           ..addRequestHandler((req) => req.path=="/enonce/1" && req.method == "POST" , _enonce1)
            ..listen(host, port);
     print('Listening for connections on $host:$port');
   }
@@ -41,7 +43,6 @@ class DartStoryServer {
   }
   
   _doAnswer(HttpResponse response, String content){
-    print("Answer=$content");
     response.outputStream..writeString(content)
                          ..close();
   }
@@ -59,6 +60,11 @@ class DartStoryServer {
     String answer = _findAnswer(query);
     print("Query=$query Answer=$answer");
     _doAnswer(response,answer);
+  }
+  
+  _enonce1(HttpRequest request, HttpResponse response){
+    response.statusCode = HttpStatus.CREATED;
+    _doAnswer(response, "OUI"); 
   }
 
 
