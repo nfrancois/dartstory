@@ -1,6 +1,7 @@
 library dart_story_server;
 
 import "dart:io";
+import 'dart:json';
 
 var env = Platform.environment;
 
@@ -19,7 +20,7 @@ class DartStoryServer {
                             "Es tu heureux de participer(OUI/NON)" : "OUI",
                             "Es tu pret a recevoir une enonce au format markdown par http post(OUI/NON)" : "OUI",
                             "Est ce que tu reponds toujours oui(OUI/NON)" : "NON",
-                            "As tu bien recu le premier enonce(OUI/NON)" : "NON"
+                            "As tu bien recu le premier enonce(OUI/NON)" : "OUI"
   };
  
   final int port;
@@ -32,8 +33,8 @@ class DartStoryServer {
   startServer(){
     print('Starting....');
     _server..defaultRequestHandler = _serveHandler
-           //..addRequestHandler((req) => req.path=="/enonce/1" && req.method == "POST" , _enonce1)
-           //..addRequestHandler((req) => req.path=="/scalaskel/change/1" && req.method == "GET" , _scalaskel)
+           ..addRequestHandler((req) => req.path=="/enonce/1" && req.method == "POST" , _enonce1)
+           ..addRequestHandler((req) => req.path=="/scalaskel/change/1" && req.method == "GET" , _scalaskel)
            ..listen(host, port);
     print('Listening for connections on $host:$port');
   }
@@ -86,6 +87,7 @@ class DartStoryServer {
   }
 
   _scalaskel(HttpRequest request, HttpResponse response){
+    //JSON.stringify(object)
     //_logRequestInfo(request);
     _doAnswer(response, "Not yet !");  
   }
