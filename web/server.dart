@@ -32,8 +32,8 @@ class DartStoryServer {
   startServer(){
     print('Starting....');
     _server..defaultRequestHandler = _serveHandler
-           ..addRequestHandler((req) => req.path=="/enonce/1" && req.method == "POST" , _enonce1)
-           ..addRequestHandler((req) => req.path=="/scalaskel/change/1" && req.method == "GET" , _scalaskel)
+           //..addRequestHandler((req) => req.path=="/enonce/1" && req.method == "POST" , _enonce1)
+           //..addRequestHandler((req) => req.path=="/scalaskel/change/1" && req.method == "GET" , _scalaskel)
            ..listen(host, port);
     print('Listening for connections on $host:$port');
   }
@@ -54,16 +54,20 @@ class DartStoryServer {
   _doAnswer(HttpResponse response, String content){
     response.outputStream..writeString(content)
                          ..writeString("\n")
-                         ..close();
+                         ..flush();
   }
   
   _logRequestInfo(HttpRequest request){
     print("************** Request Info **************");
-    print("${request.path} => Headers");
-    request.headers.forEach((key, value) => print("* Header key=$key : value=$value"));     
-    print("${request.path} => Nbr params=${request.queryParameters.length}");
-    request.queryParameters.forEach((key, value) => print("* Param key=$key : value=$value"));
-    print("****************************");
+    print(request.path);
+    print("=> Headers");
+    request.headers.forEach((key, value) => print("* key=$key : value=$value"));     
+    print("=> Parameters");
+    request.queryParameters.forEach((key, value) => print("* key=$key : value=$value"));
+    print("=> Data (size=${request.contentLength})");
+    var input = request.inputStream;
+    input.onData = ()  => print(new String.fromCharCodes(input.read()));
+    print("******************************************");
   }  
   
   /*****************   Handlers http  *****************/ 
@@ -82,7 +86,7 @@ class DartStoryServer {
   }
 
   _scalaskel(HttpRequest request, HttpResponse response){
-    _logRequestInfo(request);
+    //_logRequestInfo(request);
     _doAnswer(response, "Not yet !");  
   }
   
