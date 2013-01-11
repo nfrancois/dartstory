@@ -57,14 +57,18 @@ class DartStoryServer {
                          ..close();
   }
   
-  _logParams(HttpRequest request){
-    print("${request.path} => Nbr arg=${request.queryParameters.length}");
-    request.queryParameters.forEach((key, value) => print("$key : $value"));    
+  _logRequestInfo(HttpRequest request){
+    print("************** Request Info **************");
+    print("${request.path} => Headers");
+    request.headers.forEach((key, value) => print("* Header key=$key : value=$value"));     
+    print("${request.path} => Nbr params=${request.queryParameters.length}");
+    request.queryParameters.forEach((key, value) => print("* Param key=$key : value=$value"));
+    print("****************************");
   }  
   
   /*****************   Handlers http  *****************/ 
   _serveHandler(HttpRequest request, HttpResponse response){
-    _logParams(request);
+    _logRequestInfo(request);
     var query = request.queryParameters["q"];
     String answer = _findAnswer(query);
     print("Query=$query Answer=$answer");
@@ -72,13 +76,13 @@ class DartStoryServer {
   }
   
   _enonce1(HttpRequest request, HttpResponse response){
-    _logParams(request);
+    _logRequestInfo(request);
     //response.statusCode = HttpStatus.CREATED;
     _doAnswer(response, "OUI"); 
   }
 
   _scalaskel(HttpRequest request, HttpResponse response){
-    _logParams(request);
+    _logRequestInfo(request);
     _doAnswer(response, "Not yet !");  
   }
   
