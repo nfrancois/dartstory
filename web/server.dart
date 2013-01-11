@@ -19,7 +19,7 @@ class DartStoryServer {
                             "Es tu heureux de participer(OUI/NON)" : "OUI",
                             "Es tu pret a recevoir une enonce au format markdown par http post(OUI/NON)" : "OUI",
                             "Est ce que tu reponds toujours oui(OUI/NON)" : "NON",
-                            "As tu bien recu le premier enonce(OUI/NON)" : "NON"
+                            "As tu bien recu le premier enonce(OUI/NON)" : "OUI"
   };
  
   final int port;
@@ -33,6 +33,7 @@ class DartStoryServer {
     print('Starting....');
     _server..defaultRequestHandler = _serveHandler
            ..addRequestHandler((req) => req.path=="/enonce/1" && req.method == "POST" , _enonce1)
+           ..addRequestHandler((req) => req.path=="/scalaskel/change/1" && req.method == "GET" , _scalaskel)
            ..listen(host, port);
     print('Listening for connections on $host:$port');
   }
@@ -44,6 +45,7 @@ class DartStoryServer {
   
   _doAnswer(HttpResponse response, String content){
     response.outputStream..writeString(content)
+                         ..writeString("\n")
                          ..close();
   }
   
@@ -67,5 +69,10 @@ class DartStoryServer {
     _doAnswer(response, "OUI"); 
   }
 
+  _scalaskel(HttpRequest request, HttpResponse response){
+    print("Nbr arg=${request.queryParameters.length}");
+    request.queryParameters.forEach((key, value) => print("$key : $value"));
+    _doAnswer(response, "Not yet !");  
+  }
 
 }
