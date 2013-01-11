@@ -43,21 +43,28 @@ class DartStoryServer {
     _server.close();
   }
   
-  _doAnswer(HttpResponse response, String content){
-    response.outputStream..writeString(content)
-                         ..writeString("\n")
-                         ..close();
-  }
-  
   String _findAnswer(String query){
     if(query != null && queryAnswers.containsKey(query)){
       return queryAnswers[query];
     } else {
       return "@CodeStory with Dart";    
     }    
+  } 
+  
+  _doAnswer(HttpResponse response, String content){
+    response.outputStream..writeString(content)
+                         ..writeString("\n")
+                         ..close();
   }
   
+  _logParams(HttpRequest request){
+    print("${request.path} => Nbr arg=${request.queryParameters.length}");
+    request.queryParameters.forEach((key, value) => print("$key : $value"));    
+  }  
+  
+  /*****************   Handlers http  *****************/ 
   _serveHandler(HttpRequest request, HttpResponse response){
+    _logParams(request);
     var query = request.queryParameters["q"];
     String answer = _findAnswer(query);
     print("Query=$query Answer=$answer");
@@ -65,14 +72,15 @@ class DartStoryServer {
   }
   
   _enonce1(HttpRequest request, HttpResponse response){
+    _logParams(request);
     response.statusCode = HttpStatus.CREATED;
     _doAnswer(response, "OUI"); 
   }
 
   _scalaskel(HttpRequest request, HttpResponse response){
-    print("Nbr arg=${request.queryParameters.length}");
-    request.queryParameters.forEach((key, value) => print("$key : $value"));
+    _logParams(request);
     _doAnswer(response, "Not yet !");  
   }
+  
 
 }
