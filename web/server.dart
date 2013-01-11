@@ -19,7 +19,7 @@ class DartStoryServer {
                             "Es tu heureux de participer(OUI/NON)" : "OUI",
                             "Es tu pret a recevoir une enonce au format markdown par http post(OUI/NON)" : "OUI",
                             "Est ce que tu reponds toujours oui(OUI/NON)" : "NON",
-                            "As tu bien recu le premier enonce(OUI/NON)" : "OUI"
+                            "As tu bien recu le premier enonce(OUI/NON)" : "NON"
   };
  
   final int port;
@@ -73,7 +73,7 @@ class DartStoryServer {
   
   _enonce1(HttpRequest request, HttpResponse response){
     _logParams(request);
-    response.statusCode = HttpStatus.CREATED;
+    //response.statusCode = HttpStatus.CREATED;
     _doAnswer(response, "OUI"); 
   }
 
