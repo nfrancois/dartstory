@@ -62,7 +62,6 @@ class DartStoryServer {
   
   /*****************   Handlers http  *****************/ 
   _serveHandler(HttpRequest request, HttpResponse response){
-    _logRequestInfo(request);
     var query = request.queryParameters["q"];
     String answer = (query == null) ? "@CodeStory with Dart" :_queryAnalyser.findAnswer(query);
     print("Query=$query Answer=$answer");
