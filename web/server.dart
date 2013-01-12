@@ -2,7 +2,8 @@ library dart_story_server;
 
 import "dart:io";
 import 'dart:json';
-import 'package:dart_story/scalaskel.dart';
+//import 'package:dart_story/scalaskel.dart';
+import '../lib/scalaskel.dart';
 
 var env = Platform.environment;
 
