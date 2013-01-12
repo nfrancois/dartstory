@@ -1,9 +1,7 @@
-library scalaskel_test;
+library opertion_test;
 
 import "package:unittest/unittest.dart";
-import "package:dart_story/operation.dart";
-
-import 'dart:json';
+import "package:dart_story/query_analyser.dart";
 
 Operation op;
 

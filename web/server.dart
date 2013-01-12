@@ -4,7 +4,7 @@ import "dart:io";
 import 'dart:json';
 //import 'package:dart_story/scalaskel.dart';
 import '../lib/scalaskel.dart';
-import '../lib/operation.dart';
+import '../lib/query_analyser.dart';
 
 var env = Platform.environment;
 
@@ -17,22 +17,15 @@ main(){
 
 class DartStoryServer {
   
-  final Map queryAnswers = {
-                            "Quelle est ton adresse email" : "nicolas.franc@gmail.com",
-                            "Es tu abonne a la mailing list(OUI/NON)": "OUI",
-                            "Es tu heureux de participer(OUI/NON)" : "OUI",
-                            "Es tu pret a recevoir une enonce au format markdown par http post(OUI/NON)" : "OUI",
-                            "Est ce que tu reponds toujours oui(OUI/NON)" : "NON",
-                            "As tu bien recu le premier enonce(OUI/NON)" : "OUI"
-  };
  
   final int port;
   final String host;
   final HttpServer _server;
-  final MoneyChanger  _changer;
-  final Operation _operation;
   
-  DartStoryServer(this.host, this.port) : _server = new HttpServer(), _changer = new MoneyChanger(), _operation = new Operation();
+  final MoneyChanger  _changer;
+  final QueryAnalyser _queryAnalyser;
+  
+  DartStoryServer(this.host, this.port) : _server = new HttpServer(), _changer = new MoneyChanger(), _queryAnalyser = new QueryAnalyser();
   
   
   startServer(){
@@ -47,36 +40,6 @@ class DartStoryServer {
   stopServer(){
     print("Stopping...");
     _server.close();
-  }
-  
-  String _findAnswer(String query){
-    if(query == null) {
-      return "@CodeStory with Dart";    
-    } else if(queryAnswers.containsKey(query)){
-      return queryAnswers[query];
-    } else {
-      return _doOperation(query);
-    }    
-  } 
-  
-  String _doOperation(String query){
-    if(query.contains("*")){
-      var values = query.split("*");
-      try {
-        num result = _operation.multiply(int.parse(values[0]), int.parse(values[1]));
-        return result.toString();
-      } on FormatException catch (fe) {
-        return  "Erreur. Pas un entier. $fe";
-      }      
-    } else {
-      var values = query.split(" ");
-      try {
-        num result = _operation.add(int.parse(values[0]), int.parse(values[1]));
-        return result.toString();
-      } on FormatException catch (fe) {
-        return  "Erreur. Pas un entier. $fe";
-      }
-    }
   }
   
   _doAnswer(HttpResponse response, String content){
@@ -103,7 +66,7 @@ class DartStoryServer {
   _serveHandler(HttpRequest request, HttpResponse response){
     _logRequestInfo(request);
     var query = request.queryParameters["q"];
-    String answer = _findAnswer(query);
+    String answer = _queryAnalyser.findAnswer(query);
     print("Query=$query Answer=$answer");
     _doAnswer(response,answer);
   }
