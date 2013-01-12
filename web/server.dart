@@ -60,12 +60,22 @@ class DartStoryServer {
   } 
   
   String _doOperation(String query){
-    var values = query.split(" ");
-    try {
-      num result = _operation.add(int.parse(values[0]), int.parse(values[1]));
-      return result.toString();
-    } on FormatException catch (fe) {
-      return  "Erreur. Pas un entier. $fe";
+    if(query.contains("*")){
+      var values = query.split("*");
+      try {
+        num result = _operation.multiply(int.parse(values[0]), int.parse(values[1]));
+        return result.toString();
+      } on FormatException catch (fe) {
+        return  "Erreur. Pas un entier. $fe";
+      }      
+    } else {
+      var values = query.split(" ");
+      try {
+        num result = _operation.add(int.parse(values[0]), int.parse(values[1]));
+        return result.toString();
+      } on FormatException catch (fe) {
+        return  "Erreur. Pas un entier. $fe";
+      }
     }
   }
   

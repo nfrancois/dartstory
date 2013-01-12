@@ -10,7 +10,8 @@ Operation op;
 main(){
   group('Operation Tests', (){
     setUp(() => op = new Operation());
-    test('Add 1 and 1', add_1_and_1);
+    test('1+1', add_1_and_1);
+    test('2*3', multiply_2_by_3);
   });
 }
 
@@ -20,4 +21,12 @@ add_1_and_1(){
   
   // Then
   expect(result, equals(2));
+}
+
+multiply_2_by_3(){
+  // When
+  var result = op.multiply(2, 3);
+  
+  // Then
+  expect(result, equals(6)); 
 }
