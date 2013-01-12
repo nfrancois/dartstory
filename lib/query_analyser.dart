@@ -2,6 +2,7 @@ library query_analyser;
 
 class QueryAnalyser {
 
+  const _UNKNOWN_QUERY = "Unknown query";
   final Operation _operation;
   
   QueryAnalyser() : _operation = new Operation();
@@ -15,16 +16,7 @@ class QueryAnalyser {
                             "As tu bien recu le premier enonce(OUI/NON)" : "OUI"
   };  
   
-  
-  String findAnswer(String query){
-    if(query == null) {
-      return "@CodeStory with Dart";    
-    } else if(_queryAnswers.containsKey(query)){
-      return _queryAnswers[query];
-    } else {
-      return _doOperation(query);
-    }    
-  } 
+  String findAnswer(String query) => (_queryAnswers.containsKey(query)) ? _queryAnswers[query] : _doOperation(query);
   
   String _doOperation(String query){
     if(query.contains("*")){
@@ -33,7 +25,8 @@ class QueryAnalyser {
         num result = _operation.multiply(int.parse(values[0]), int.parse(values[1]));
         return result.toString();
       } on FormatException catch (fe) {
-        return  "Erreur. Pas un entier. $fe";
+        print("Erreur. Pas un entier. $fe");
+        return  _UNKNOWN_QUERY;
       }      
     } else {
       var values = query.split(" ");
@@ -41,23 +34,28 @@ class QueryAnalyser {
         num result = _operation.add(int.parse(values[0]), int.parse(values[1]));
         return result.toString();
       } on FormatException catch (fe) {
-        return  "Erreur. Pas un entier. $fe";
+        print("Erreur. Pas un entier. $fe");
+        return  _UNKNOWN_QUERY;
       }
     }
-  }  
+  }
   
 }
 
 class Operation {
   
-  
-  num add(num a, num b){
-    return a+b;
+  num doOperation(num a, String op, num b){
+    switch(op){
+      case "*":
+        return multiply(a,b);
+      case "+":
+        return add(a,b);
+    }
   }
   
-  num multiply(num a, num b){
-    return  a*b;
-  }
+  num add(num a, num b) => a+b;
+  
+  num multiply(num a, num b) => a*b;
   
 }
 

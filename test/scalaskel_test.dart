@@ -1,4 +1,4 @@
-library scalaskel_test;
+library test;
 
 import "package:unittest/unittest.dart";
 import "package:dart_story/scalaskel.dart";

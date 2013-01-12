@@ -16,7 +16,6 @@ main(){
 }
 
 class DartStoryServer {
-  
  
   final int port;
   final String host;
@@ -26,7 +25,6 @@ class DartStoryServer {
   final QueryAnalyser _queryAnalyser;
   
   DartStoryServer(this.host, this.port) : _server = new HttpServer(), _changer = new MoneyChanger(), _queryAnalyser = new QueryAnalyser();
-  
   
   startServer(){
     print('Starting....');
@@ -66,7 +64,7 @@ class DartStoryServer {
   _serveHandler(HttpRequest request, HttpResponse response){
     _logRequestInfo(request);
     var query = request.queryParameters["q"];
-    String answer = _queryAnalyser.findAnswer(query);
+    String answer = (query == null) ? "@CodeStory with Dart" :_queryAnalyser.findAnswer(query);
     print("Query=$query Answer=$answer");
     _doAnswer(response,answer);
   }

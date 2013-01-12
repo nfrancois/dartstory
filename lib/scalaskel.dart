@@ -49,6 +49,7 @@ class MoneyChanger {
   const QIX_VALUE = 11;
   const BAZ_VALUE = 21;
   
+  // TODO recursive ?
   List<Money> change(int value){
     var results = new List<Money>();
     var bazMax = value ~/ BAZ_VALUE;

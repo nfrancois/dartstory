@@ -1,4 +1,4 @@
-library opertion_test;
+library test;
 
 import "package:unittest/unittest.dart";
 import "package:dart_story/query_analyser.dart";
