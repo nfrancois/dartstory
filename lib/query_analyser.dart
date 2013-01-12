@@ -1,5 +1,8 @@
 library query_analyser;
 
+const MULTIPLY_OPERATOR = "*";
+const ADD_OPERATOR = " ";
+
 class QueryAnalyser {
 
   const _UNKNOWN_QUERY = "Unknown query";
@@ -19,36 +22,36 @@ class QueryAnalyser {
   String findAnswer(String query) => (_queryAnswers.containsKey(query)) ? _queryAnswers[query] : _doOperation(query);
   
   String _doOperation(String query){
-    if(query.contains("*")){
-      var values = query.split("*");
-      try {
-        num result = _operation.multiply(int.parse(values[0]), int.parse(values[1]));
-        return result.toString();
-      } on FormatException catch (fe) {
-        print("Erreur. Pas un entier. $fe");
-        return  _UNKNOWN_QUERY;
-      }      
+    num result = 0;
+    String operator;
+    var values;
+    if(query.contains(MULTIPLY_OPERATOR)){
+      operator = MULTIPLY_OPERATOR;
+    } else if (query.contains(ADD_OPERATOR)){
+      operator = ADD_OPERATOR;
     } else {
-      var values = query.split(" ");
-      try {
-        num result = _operation.add(int.parse(values[0]), int.parse(values[1]));
-        return result.toString();
-      } on FormatException catch (fe) {
-        print("Erreur. Pas un entier. $fe");
-        return  _UNKNOWN_QUERY;
-      }
+      return _UNKNOWN_QUERY;
     }
+    values = query.split(operator);
+    try {
+        result = _operation.doOperation(int.parse(values[0]), operator, int.parse(values[1]));
+    } on FormatException catch (fe) {
+      print("Erreur. Pas un entier. $fe");
+      return  _UNKNOWN_QUERY;
+    }      
+    return result.toString(); 
   }
   
 }
 
 class Operation {
   
+  // TODO à tester
   num doOperation(num a, String op, num b){
     switch(op){
-      case "*":
+      case MULTIPLY_OPERATOR:
         return multiply(a,b);
-      case "+":
+      case ADD_OPERATOR:
         return add(a,b);
     }
   }
