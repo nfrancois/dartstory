@@ -1,0 +1,1 @@
+dart test/scalaskel_test.dart

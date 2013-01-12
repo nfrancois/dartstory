@@ -2,6 +2,7 @@ library dart_story_server;
 
 import "dart:io";
 import 'dart:json';
+import 'package:dart_story/scalaskel.dart';
 
 var env = Platform.environment;
 
@@ -26,15 +27,16 @@ class DartStoryServer {
   final int port;
   final String host;
   final HttpServer _server;
+  final MoneyChanger  _changer;
   
-  DartStoryServer(this.host, this.port) : _server = new HttpServer();
+  DartStoryServer(this.host, this.port) : _server = new HttpServer(), _changer = new MoneyChanger();
   
   
   startServer(){
     print('Starting....');
     _server..defaultRequestHandler = _serveHandler
            ..addRequestHandler((req) => req.path=="/enonce/1" && req.method == "POST" , _enonce1)
-           ..addRequestHandler((req) => req.path=="/scalaskel/change/1" && req.method == "GET" , _scalaskel)
+           ..addRequestHandler((req) => req.path.startsWith("/scalaskel/change/") && req.method == "GET" , _scalaskel)
            ..listen(host, port);
     print('Listening for connections on $host:$port');
   }
@@ -55,7 +57,8 @@ class DartStoryServer {
   _doAnswer(HttpResponse response, String content){
     response.outputStream..writeString(content)
                          ..writeString("\n")
-                         ..flush();
+                         //..flush()
+                         ..close();
   }
   
   _logRequestInfo(HttpRequest request){
@@ -82,14 +85,16 @@ class DartStoryServer {
   
   _enonce1(HttpRequest request, HttpResponse response){
     _logRequestInfo(request);
-    //response.statusCode = HttpStatus.CREATED;
+    response.statusCode = HttpStatus.CREATED;
     _doAnswer(response, "OUI"); 
   }
 
   _scalaskel(HttpRequest request, HttpResponse response){
-    //JSON.stringify(object)
-    //_logRequestInfo(request);
-    _doAnswer(response, "Not yet !");  
+    var value = int.parse(request.path.substring(18));
+    var results = _changer.change(value);
+    var json = results.map((money) => money.toJson());
+    print("Change $value => $json");
+    _doAnswer(response, json.toString());  
   }
   
 
