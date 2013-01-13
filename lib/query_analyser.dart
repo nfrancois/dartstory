@@ -42,21 +42,53 @@ class Calculator {
   Calculator();
   
   num parse(String query){
-    if(query.startsWith("(") && query.endsWith(")")){
+    if(isInParenth(query)){
       return parse(query.substring(1, query.length-1));
     }
-    var firstAdd = query.indexOf(ADD_OPERATOR);
-    var firstMult = query.indexOf(MULT_OPERATOR);
-    var firstDiv = query.indexOf(DIV_OPERATOR);
-    if(firstAdd==-1 && firstMult==-1 && firstDiv == -1){// Pas d'opération
+    var lastOperatorIndex = indexOfLastOperator(query);
+    if(lastOperatorIndex == -1){
       return toNum(query);
     }
-    var firstOp = math.max(math.max(firstAdd, firstMult), firstDiv);
-    var operator = query[firstOp];
-    num a = parse(query.substring(0, firstOp));
-    num b = parse(query.substring(firstOp+1, query.length));
+    var operator = query[lastOperatorIndex];
+    num a = parse(query.substring(0, lastOperatorIndex));
+    num b = parse(query.substring(lastOperatorIndex+1, query.length));
     var operation = new Operation(a,b, operator);
     return doOperation(operation);    
+  }
+  
+  int indexOfLastOperator(String query){
+    var parentLevel = 0;
+    for(int i=query.length-1; i>=0; i--){
+      var char = query[i];
+      if((char == ADD_OPERATOR || char == MULT_OPERATOR || char == DIV_OPERATOR) && parentLevel == 0){
+        return i;
+      } else if(char == ")"){
+        parentLevel++;
+      } else if(char == "("){
+        parentLevel--;
+      }
+    }
+    return -1;
+  }
+  
+  bool isInParenth(String query){
+    bool startAndStopInParenth = query[0] == "(" && query[query.length-1] == ")";
+    if(!startAndStopInParenth){
+      return false;
+    }
+    var parentLevel = 0;
+    for(int i=0; i<query.length; i++){
+      var char = query[i];
+      if(char == "("){
+        parentLevel++;
+      } else if(char == ")"){
+        parentLevel--;
+      }
+      if(parentLevel == 0){
+        return i == query.length-1;
+      }
+    }
+    return true;
   }
   
   num toNum(String s){
@@ -82,7 +114,6 @@ class Calculator {
   num add(num a, num b) => a+b;
   
   num multiply(num a, num b) => a*b;
-  
 
   num divide(num a, num b) => b==0 ? 0 : a/b; 
 }

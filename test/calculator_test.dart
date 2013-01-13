@@ -16,7 +16,19 @@ main(){
     test('Multiplication', should_do_multiplication);
     test('Addition', should_do_addition);
     test('Division', should_do_divisiion);
-  });
+    test('No operation', should_not_find_operator);
+    test('No operation but parenth', should_not_find_operator_in_parenth);
+    test('find addition', should_find_add);
+    test('find multiplication', should_find_div);
+    test('find division', should_find_mult);
+    test('Not find add in ()', should_not_find_add_in_parenth);
+    test('Not find mult in ()', should_not_find_mult_in_parenth);
+    test('Not find div in ()', should_not_find_div_in_parenth);
+    test('in ()', should_be_in_parenth);
+    test('multi (() )', should_be_in_multi_parenth);
+    test('no  ()', should_not_be_parenth);
+    test('multi ()()', should_not_be_parenth_but_contains);
+  });  
 }
 
 add_1_and_1(){
@@ -84,3 +96,100 @@ should_do_divisiion(){
   // Then
   expect(result, equals(2));
 }
+
+should_not_find_operator(){
+  // When 
+  var result = calculator.indexOfLastOperator("42");
+  
+  // Then
+  expect(result, equals(-1));  
+}
+
+should_not_find_operator_in_parenth(){
+  // When 
+  var result = calculator.indexOfLastOperator("(42)");
+  
+  // Then
+  expect(result, equals(-1));  
+}
+
+should_find_add(){
+  // When 
+  var result = calculator.indexOfLastOperator("42 2");
+  
+  // Then
+  expect(result, equals(2));    
+}
+
+should_find_div(){
+  // When 
+  var result = calculator.indexOfLastOperator("42/2");
+  
+  // Then
+  expect(result, equals(2));     
+}
+
+should_find_mult(){
+  // When 
+  var result = calculator.indexOfLastOperator("42*2");
+  
+  // Then
+  expect(result, equals(2));  
+}
+
+should_not_find_add_in_parenth(){
+  // When 
+  var result = calculator.indexOfLastOperator("(42 2)");
+  
+  // Then
+  expect(result, equals(-1));     
+}
+
+should_not_find_mult_in_parenth(){
+  // When 
+  var result = calculator.indexOfLastOperator("(42/2)");
+  
+  // Then
+  expect(result, equals(-1));     
+}
+
+should_not_find_div_in_parenth(){
+  // When 
+  var result = calculator.indexOfLastOperator("(42*2)");
+  
+  // Then
+  expect(result, equals(-1));  
+}
+
+should_be_in_parenth(){
+  // When 
+  var result = calculator.isInParenth("(42)");
+  
+  // Then
+  expect(result, isTrue);    
+}
+
+should_be_in_multi_parenth(){
+  // When 
+  var result = calculator.isInParenth("((42 3)*2)");
+  
+  // Then
+  expect(result, isTrue);    
+}
+
+should_not_be_parenth(){
+  // When 
+  var result = calculator.isInParenth("42");
+  
+  // Then
+  expect(result, isFalse);    
+}
+
+should_not_be_parenth_but_contains(){
+  // When 
+  var result = calculator.isInParenth("(42 2)*(4 5)");
+  
+  // Then
+  expect(result, isFalse);    
+}
+

@@ -13,6 +13,7 @@ main(){
     test("multiply", should_multiply);
     test("divide", should_divide);
     test("with ()", should_calculate_by_priority);
+    test("with ()", should_calculate_with_parent);
   });
 }
 
@@ -46,3 +47,13 @@ should_calculate_by_priority(){
   // Then
   expect(result, "6");
 }
+
+should_calculate_with_parent(){
+  // When
+  String result = analyser.findAnswer("(1 2) 3 4 (5 6 7) (8 9 10)");
+  // Then
+  expect(result, "55");
+}
+
+
+// 
