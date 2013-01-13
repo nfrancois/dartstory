@@ -1,7 +1,5 @@
 library query_analyser;
 
-import "dart:math" as math;
-
 class QueryAnalyser {
 
   final Map _queryAnswers = {
@@ -22,16 +20,14 @@ class QueryAnalyser {
   
   String numToString(num value){
     var s = value.toString();
-    int index = s.indexOf(".");
-    if(index != -1){
-      var decimalPart = s.substring(index+1);
-      if(int.parse(decimalPart) == 0){
-        return s.substring(0, index);
-      }
-      s = s.replaceFirst(".", ",");
+    if(s.contains("e+")){
+      s = value.toInt().toString();
+    } else if(!(num is int)){
+      //if(num is double){ // Fail WTF ???
+      s = (s.endsWith(".0")) ? s.substring(0, s.length-2) : s.replaceFirst(".", ",");
     }
     return s;
-  }
+}
   
   
 }
@@ -59,13 +55,13 @@ class Calculator {
     if(isInParenth(query)){
       return parse(query.substring(1, query.length-1));
     }
-    var lastOperatorIndex = indexOfSeparationOperator(query);
-    if(lastOperatorIndex == -1){
+    var operatorIndex = indexOfSeparationOperator(query);
+    if(operatorIndex == -1){
       return toNum(query);
     }
-    var operator = query[lastOperatorIndex];
-    num a = parse(query.substring(0, lastOperatorIndex));
-    num b = parse(query.substring(lastOperatorIndex+1, query.length));
+    var operator = query[operatorIndex];
+    num a = parse(query.substring(0, operatorIndex));
+    num b = parse(query.substring(operatorIndex+1, query.length));
     var operation = new Operation(a,b, operator);
     return doOperation(operation);    
   }

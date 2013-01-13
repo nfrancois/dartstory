@@ -17,8 +17,9 @@ main(){
     test("with priority", should_calculate_with_priority);
     test("with priority", should_calculate_with_priority_2);
     test('42 is "42"', should_convert_num_int);
-    test('42 is "42"', should_convert_num_double);
-    test('42 is "42"', should_convert_num_double_as_int);
+    test('4.2 is "4,2"', should_convert_num_double);
+    test('6.0 is "6"', should_convert_num_double_as_int);
+    test('long can be convert', should_convert_num_long_int);
   });
 }
 
@@ -30,12 +31,20 @@ should_convert_num_int(){
   expect(result, "42");   
 }
 
-should_convert_num_double(){
+should_convert_num_long_int(){
   // When
-  String result = analyser.numToString(42);
+  String result = analyser.numToString(3.18780189038289e+49);
   
   // Then
-  expect(result, "42");   
+  expect(result, "31878018903828901761984975061078744643351263313920");    
+}
+
+should_convert_num_double(){
+  // When
+  String result = analyser.numToString(4.2);
+  
+  // Then
+  expect(result, "4,2");   
 }
 
 should_convert_num_double_as_int(){
@@ -94,8 +103,7 @@ should_calculate_with_priority(){
 should_calculate_with_priority_2(){
   // When
   String result = analyser.findAnswer("2*2 1");
+
   // Then
   expect(result, "5");
 }
-
-
