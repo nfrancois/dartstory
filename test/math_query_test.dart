@@ -16,7 +16,34 @@ main(){
     test("with ()", should_calculate_with_parent);
     test("with priority", should_calculate_with_priority);
     test("with priority", should_calculate_with_priority_2);
+    test('42 is "42"', should_convert_num_int);
+    test('42 is "42"', should_convert_num_double);
+    test('42 is "42"', should_convert_num_double_as_int);
   });
+}
+
+should_convert_num_int(){
+  // When
+  String result = analyser.numToString(42);
+  
+  // Then
+  expect(result, "42");   
+}
+
+should_convert_num_double(){
+  // When
+  String result = analyser.numToString(42);
+  
+  // Then
+  expect(result, "42");   
+}
+
+should_convert_num_double_as_int(){
+  // When
+  String result = analyser.numToString(6.0);
+  
+  // Then
+  expect(result, "6");   
 }
 
 should_add(){

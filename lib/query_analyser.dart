@@ -16,9 +16,23 @@ class QueryAnalyser {
   String findAnswer(String query) => (_queryAnswers.containsKey(query)) ? _queryAnswers[query] : _doOperation(query);
   
   String _doOperation(String query) {
-    var result = new Calculator().parse(query).toString(); 
-    return result.replaceFirst(".", ",");
+    var result = new Calculator().parse(query);
+    return numToString(result);
   }
+  
+  String numToString(num value){
+    var s = value.toString();
+    int index = s.indexOf(".");
+    if(index != -1){
+      var decimalPart = s.substring(index+1);
+      if(int.parse(decimalPart) == 0){
+        return s.substring(0, index);
+      }
+      s = s.replaceFirst(".", ",");
+    }
+    return s;
+  }
+  
   
 }
 
