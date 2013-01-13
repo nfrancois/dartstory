@@ -97,12 +97,17 @@ class Calculator {
   }
   
   num toNum(String s){
+    num value = 0;
     try {
-      return int.parse(s);
+      if(s.contains(",")){
+        value = double.parse(s.replaceAll(",", "."));
+      } else {
+        value = int.parse(s);
+      }
     } on FormatException catch (fe) {
       print("Erreur. Pas un entier. $fe");
-      return  0;
     }    
+    return  value;
   }
   
   num doOperation(Operation o){
