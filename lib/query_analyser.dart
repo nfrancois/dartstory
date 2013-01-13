@@ -45,7 +45,7 @@ class Calculator {
     if(isInParenth(query)){
       return parse(query.substring(1, query.length-1));
     }
-    var lastOperatorIndex = indexOfLastOperator(query);
+    var lastOperatorIndex = indexOfSeparationOperator(query);
     if(lastOperatorIndex == -1){
       return toNum(query);
     }
@@ -56,19 +56,24 @@ class Calculator {
     return doOperation(operation);    
   }
   
-  int indexOfLastOperator(String query){
+  int indexOfSeparationOperator(String query){
     var parentLevel = 0;
-    for(int i=query.length-1; i>=0; i--){
+    var bestOp = -1;
+    for(int i=0; i<query.length; i++){
       var char = query[i];
-      if((char == ADD_OPERATOR || char == MULT_OPERATOR || char == DIV_OPERATOR) && parentLevel == 0){
-        return i;
-      } else if(char == ")"){
+      if(char == "("){
         parentLevel++;
-      } else if(char == "("){
+      } else if(char == ")"){
         parentLevel--;
+      } else if(parentLevel == 0){
+        if(char == ADD_OPERATOR){
+          return i;
+        } else if(char == MULT_OPERATOR || char == DIV_OPERATOR){
+          bestOp = i;
+        }
       }
     }
-    return -1;
+    return bestOp;    
   }
   
   bool isInParenth(String query){

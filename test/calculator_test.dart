@@ -8,6 +8,9 @@ Calculator calculator;
 main(){
   group('Calculator Tests', (){
     setUp(() => calculator = new Calculator());
+    test('"1" is 1', to_num_one);
+    test('"42" is 42', to_num_forty_two);
+    test('"1,5" is 1,5', one_is_one_and_half);
     test('1+1', add_1_and_1);
     test('1+1', add_2_and_4);
     test('2*3', multiply_2_by_3);
@@ -21,6 +24,8 @@ main(){
     test('find addition', should_find_add);
     test('find multiplication', should_find_div);
     test('find division', should_find_mult);
+    test('find with priority', should_find_operator_prio);
+    test('find with priority', should_find_operator_prio_2);
     test('Not find add in ()', should_not_find_add_in_parenth);
     test('Not find mult in ()', should_not_find_mult_in_parenth);
     test('Not find div in ()', should_not_find_div_in_parenth);
@@ -30,6 +35,31 @@ main(){
     test('multi ()()', should_not_be_parenth_but_contains);
   });  
 }
+
+to_num_one(){
+  // When
+  var result = calculator.toNum("1");
+  
+  // Then
+  expect(result, equals(1));
+}
+
+to_num_forty_two(){
+  // When
+  var result = calculator.toNum("1,5");
+  
+  // Then
+  expect(result, equals(1.5));
+}
+
+ one_is_one_and_half(){
+   // When
+   var result = calculator.add(1, 1);
+   
+   // Then
+   expect(result, equals(2));
+ }
+
 
 add_1_and_1(){
   // When
@@ -99,7 +129,7 @@ should_do_divisiion(){
 
 should_not_find_operator(){
   // When 
-  var result = calculator.indexOfLastOperator("42");
+  var result = calculator.indexOfSeparationOperator("42");
   
   // Then
   expect(result, equals(-1));  
@@ -107,7 +137,7 @@ should_not_find_operator(){
 
 should_not_find_operator_in_parenth(){
   // When 
-  var result = calculator.indexOfLastOperator("(42)");
+  var result = calculator.indexOfSeparationOperator("(42)");
   
   // Then
   expect(result, equals(-1));  
@@ -115,7 +145,7 @@ should_not_find_operator_in_parenth(){
 
 should_find_add(){
   // When 
-  var result = calculator.indexOfLastOperator("42 2");
+  var result = calculator.indexOfSeparationOperator("42 2");
   
   // Then
   expect(result, equals(2));    
@@ -123,7 +153,7 @@ should_find_add(){
 
 should_find_div(){
   // When 
-  var result = calculator.indexOfLastOperator("42/2");
+  var result = calculator.indexOfSeparationOperator("42/2");
   
   // Then
   expect(result, equals(2));     
@@ -131,15 +161,31 @@ should_find_div(){
 
 should_find_mult(){
   // When 
-  var result = calculator.indexOfLastOperator("42*2");
+  var result = calculator.indexOfSeparationOperator("42*2");
   
   // Then
   expect(result, equals(2));  
 }
 
+should_find_operator_prio(){
+  // When 
+  var result = calculator.indexOfSeparationOperator("1 2*2");
+  
+  // Then
+  expect(result, equals(1));  
+}
+
+should_find_operator_prio_2(){
+  // When 
+  var result = calculator.indexOfSeparationOperator("2*2 1");
+  
+  // Then
+  expect(result, equals(3));  
+}
+
 should_not_find_add_in_parenth(){
   // When 
-  var result = calculator.indexOfLastOperator("(42 2)");
+  var result = calculator.indexOfSeparationOperator("(42 2)");
   
   // Then
   expect(result, equals(-1));     
@@ -147,7 +193,7 @@ should_not_find_add_in_parenth(){
 
 should_not_find_mult_in_parenth(){
   // When 
-  var result = calculator.indexOfLastOperator("(42/2)");
+  var result = calculator.indexOfSeparationOperator("(42/2)");
   
   // Then
   expect(result, equals(-1));     
@@ -155,7 +201,7 @@ should_not_find_mult_in_parenth(){
 
 should_not_find_div_in_parenth(){
   // When 
-  var result = calculator.indexOfLastOperator("(42*2)");
+  var result = calculator.indexOfSeparationOperator("(42*2)");
   
   // Then
   expect(result, equals(-1));  

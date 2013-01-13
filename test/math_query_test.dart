@@ -14,6 +14,8 @@ main(){
     test("divide", should_divide);
     test("with ()", should_calculate_by_priority);
     test("with ()", should_calculate_with_parent);
+    test("with priority", should_calculate_with_priority);
+    test("with priority", should_calculate_with_priority_2);
   });
 }
 
@@ -55,5 +57,18 @@ should_calculate_with_parent(){
   expect(result, "55");
 }
 
+should_calculate_with_priority(){
+  // When
+  String result = analyser.findAnswer("1 2*2");
+  // Then
+  expect(result, "5");
+}
 
-// 
+should_calculate_with_priority_2(){
+  // When
+  String result = analyser.findAnswer("2*2 1");
+  // Then
+  expect(result, "5");
+}
+
+
