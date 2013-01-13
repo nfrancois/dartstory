@@ -1,5 +1,7 @@
 library query_analyser;
 
+import "dart:math" as math;
+
 class QueryAnalyser {
 
   final Map _queryAnswers = {
@@ -13,16 +15,20 @@ class QueryAnalyser {
   
   String findAnswer(String query) => (_queryAnswers.containsKey(query)) ? _queryAnswers[query] : _doOperation(query);
   
-  String _doOperation(String query) => new Calculator().parse(query).toString(); 
+  String _doOperation(String query) {
+    var result = new Calculator().parse(query).toString(); 
+    return result.replaceFirst(".", ",");
+  }
   
 }
 
-const MULTIPLY_OPERATOR = "*";
+const MULT_OPERATOR = "*";
 const String ADD_OPERATOR = " ";
+const String DIV_OPERATOR = "/";
 const _UNKNOWN_QUERY = "Unknown query";
 
 class Operation {
-
+ 
   final num a;
   final num b;
   final String operator;
@@ -39,20 +45,14 @@ class Calculator {
     if(query.startsWith("(") && query.endsWith(")")){
       return parse(query.substring(1, query.length-1));
     }
-    var firstAddition = query.indexOf(ADD_OPERATOR);
-    var firstMultiply = query.indexOf(MULTIPLY_OPERATOR);
-    if(firstAddition==-1 && firstMultiply==-1){// Pas d'opération
+    var firstAdd = query.indexOf(ADD_OPERATOR);
+    var firstMult = query.indexOf(MULT_OPERATOR);
+    var firstDiv = query.indexOf(DIV_OPERATOR);
+    if(firstAdd==-1 && firstMult==-1 && firstDiv == -1){// Pas d'opération
       return toNum(query);
     }
-    var firstOp;
-    var operator;
-    if(firstAddition < firstMultiply){
-      firstOp = firstMultiply;
-      operator = MULTIPLY_OPERATOR;
-    } else {
-      firstOp = firstAddition;
-      operator = ADD_OPERATOR;
-    }
+    var firstOp = math.max(math.max(firstAdd, firstMult), firstDiv);
+    var operator = query[firstOp];
     num a = parse(query.substring(0, firstOp));
     num b = parse(query.substring(firstOp+1, query.length));
     var operation = new Operation(a,b, operator);
@@ -70,10 +70,12 @@ class Calculator {
   
   num doOperation(Operation o){
     switch(o.operator){
-      case MULTIPLY_OPERATOR:
+      case MULT_OPERATOR:
         return multiply(o.a, o.b);
       case ADD_OPERATOR:
         return add(o.a, o.b);
+      case DIV_OPERATOR:
+        return divide(o.a, o.b);        
     }
   }
   
@@ -81,5 +83,7 @@ class Calculator {
   
   num multiply(num a, num b) => a*b;
   
+
+  num divide(num a, num b) => b==0 ? 0 : a/b; 
 }
 
