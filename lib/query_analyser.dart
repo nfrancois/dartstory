@@ -1,15 +1,7 @@
 library query_analyser;
 
-const MULTIPLY_OPERATOR = "*";
-const ADD_OPERATOR = " ";
-
 class QueryAnalyser {
 
-  const _UNKNOWN_QUERY = "Unknown query";
-  final Operation _operation;
-  
-  QueryAnalyser() : _operation = new Operation();
-  
   final Map _queryAnswers = {
                             "Quelle est ton adresse email" : "nicolas.franc@gmail.com",
                             "Es tu abonne a la mailing list(OUI/NON)": "OUI",
@@ -21,38 +13,67 @@ class QueryAnalyser {
   
   String findAnswer(String query) => (_queryAnswers.containsKey(query)) ? _queryAnswers[query] : _doOperation(query);
   
-  String _doOperation(String query){
-    num result = 0;
-    String operator;
-    var values;
-    if(query.contains(MULTIPLY_OPERATOR)){
-      operator = MULTIPLY_OPERATOR;
-    } else if (query.contains(ADD_OPERATOR)){
-      operator = ADD_OPERATOR;
-    } else {
-      return _UNKNOWN_QUERY;
-    }
-    values = query.split(operator);
-    try {
-        result = _operation.doOperation(int.parse(values[0]), operator, int.parse(values[1]));
-    } on FormatException catch (fe) {
-      print("Erreur. Pas un entier. $fe");
-      return  _UNKNOWN_QUERY;
-    }      
-    return result.toString(); 
-  }
+  String _doOperation(String query) => new Calculator().parse(query).toString(); 
   
 }
 
+const MULTIPLY_OPERATOR = "*";
+const String ADD_OPERATOR = " ";
+const _UNKNOWN_QUERY = "Unknown query";
+
 class Operation {
+
+  final num a;
+  final num b;
+  final String operator;
   
-  // TODO à tester
-  num doOperation(num a, String op, num b){
-    switch(op){
+  Operation(this.a, this.b, this.operator);
+  
+}
+
+class Calculator {
+  
+  Calculator();
+  
+  num parse(String query){
+    if(query.startsWith("(") && query.endsWith(")")){
+      return parse(query.substring(1, query.length-1));
+    }
+    var firstAddition = query.indexOf(ADD_OPERATOR);
+    var firstMultiply = query.indexOf(MULTIPLY_OPERATOR);
+    if(firstAddition==-1 && firstMultiply==-1){// Pas d'opération
+      return toNum(query);
+    }
+    var firstOp;
+    var operator;
+    if(firstAddition < firstMultiply){
+      firstOp = firstMultiply;
+      operator = MULTIPLY_OPERATOR;
+    } else {
+      firstOp = firstAddition;
+      operator = ADD_OPERATOR;
+    }
+    num a = parse(query.substring(0, firstOp));
+    num b = parse(query.substring(firstOp+1, query.length));
+    var operation = new Operation(a,b, operator);
+    return doOperation(operation);    
+  }
+  
+  num toNum(String s){
+    try {
+      return int.parse(s);
+    } on FormatException catch (fe) {
+      print("Erreur. Pas un entier. $fe");
+      return  0;
+    }    
+  }
+  
+  num doOperation(Operation o){
+    switch(o.operator){
       case MULTIPLY_OPERATOR:
-        return multiply(a,b);
+        return multiply(o.a, o.b);
       case ADD_OPERATOR:
-        return add(a,b);
+        return add(o.a, o.b);
     }
   }
   

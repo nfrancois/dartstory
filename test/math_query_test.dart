@@ -11,6 +11,7 @@ main(){
     setUp(() => analyser = new QueryAnalyser());
     test("addition", should_add);
     test("multiply", should_multiply);
+    test("with ()", should_calculate_by_priority);
   });
 }
 
@@ -28,4 +29,11 @@ should_multiply(){
   
   // Then
   expect(result, "1");    
+}
+
+should_calculate_by_priority(){
+  // When
+  String result = analyser.findAnswer("(1 2)*2");
+  // Then
+  expect(result, "6");
 }

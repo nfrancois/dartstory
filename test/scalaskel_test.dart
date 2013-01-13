@@ -8,7 +8,7 @@ import 'dart:json';
 MoneyChanger changer;
 
 main(){
-  group('Foo Bar Fix Changer', (){
+  group('MoneyChanger tests', (){
     setUp(() => changer = new MoneyChanger());
     test('Change value 3', change_3);
     test('Change value 8', change_8);
