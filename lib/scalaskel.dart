@@ -24,12 +24,11 @@ class Money {
       map[key] = value;
     } 
     
-    String toString() => "foo=$foo bar=$bar qix=$qix baz=$baz";
   }
+
+  String toString() => "foo=$foo bar=$bar qix=$qix baz=$baz";
   
-  bool operator ==(Money m){
-    return m.foo == foo && m.bar == bar && m.qix == qix && m.baz == baz;
-  }
+  bool operator ==(Money m) => m.foo == foo && m.bar == bar && m.qix == qix && m.baz == baz;
   
   // Override hashCode using strategy from Effective Java, Chapter 11.
   int get hashCode {

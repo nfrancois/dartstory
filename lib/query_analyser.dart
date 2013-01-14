@@ -45,6 +45,7 @@ class Operation {
   
   Operation(this.a, this.b, this.operator);
   
+  String toString() => "$a $operator $b";  
   
 }
 
