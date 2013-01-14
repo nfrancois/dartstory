@@ -11,7 +11,7 @@ class QueryAnalyser {
                             "As tu bien recu le premier enonce(OUI/NON)" : "OUI"
   };  
   
-  String findAnswer(String query) => (_queryAnswers.containsKey(query)) ? _queryAnswers[query] : _doOperation(query);
+  String findAnswer(String query) => (_queryAnswers.containsKey(query)) ? _queryAnswers[query] : _doOperation(query.replaceAll(" ", "+"));
   
   String _doOperation(String query) {
     var result = new Calculator().parse(query);
@@ -33,7 +33,7 @@ class QueryAnalyser {
 }
 
 const MULT_OPERATOR = "*";
-const String ADD_OPERATOR = " ";
+const String ADD_OPERATOR = "+";
 const String DIV_OPERATOR = "/";
 const _UNKNOWN_QUERY = "Unknown query";
 
@@ -44,6 +44,7 @@ class Operation {
   final String operator;
   
   Operation(this.a, this.b, this.operator);
+  
   
 }
 

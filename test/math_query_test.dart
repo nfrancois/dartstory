@@ -5,7 +5,7 @@ import "package:dart_story/query_analyser.dart";
 
 QueryAnalyser analyser;
 
-// TODO mock
+// TODO mocker et descendre certains test dans calculator.
 main(){
   group("Math query Tests", (){
     setUp(() => analyser = new QueryAnalyser());
@@ -33,10 +33,10 @@ should_convert_num_int(){
 
 should_convert_num_long_int(){
   // When
-  String result = analyser.numToString(3.18780189038289e+49);
+  String result = analyser.findAnswer("((1.1 2) 3.14 4 (5 6 7) (8 9 10)*4267387833344334647677634)/2*553344300034334349999000");
   
   // Then
-  expect(result, "31878018903828901761984975061078744643351263313920");    
+  expect(result, "31878018903828899277492024491376690701584023926880");    
 }
 
 should_convert_num_double(){
