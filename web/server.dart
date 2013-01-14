@@ -1,12 +1,12 @@
 library dart_story_server;
 
 import "dart:io";
-import 'dart:json';
 import 'dart:utf';
 
 //import 'package:dart_story/scalaskel.dart';
 import '../lib/scalaskel.dart';
 import '../lib/query_analyser.dart';
+import '../lib/jajascript.dart';
 
 
 var env = Platform.environment;
@@ -26,8 +26,9 @@ class DartStoryServer {
   
   final MoneyChanger  _changer;
   final QueryAnalyser _queryAnalyser;
+  final JajaOptimizer _optimizer;
   
-  DartStoryServer(this.host, this.port) : _server = new HttpServer(), _changer = new MoneyChanger(), _queryAnalyser = new QueryAnalyser();
+  DartStoryServer(this.host, this.port) : _server = new HttpServer(), _changer = new MoneyChanger(), _queryAnalyser = new QueryAnalyser(), _optimizer = new JajaOptimizer();
   
   startServer(){
     print('Starting....');
@@ -35,6 +36,7 @@ class DartStoryServer {
            ..addRequestHandler((req) => req.path=="/enonce/1" && req.method == "POST" , _enonce1)
            ..addRequestHandler((req) => req.path.startsWith("/scalaskel/change/") && req.method == "GET" , _scalaskel)
            ..addRequestHandler((req) => req.path == "/enonce/2" && req.method == "POST" , _enonce2)
+           ..addRequestHandler((req) => req.path == "/jajascript/optimize", _jajascript)
            ..listen(host, port);
     print('Listening for connections on $host:$port');
   }
@@ -55,8 +57,8 @@ class DartStoryServer {
     if(request.contentLength != -1){
       print("************** Request Body **************");
       var input = request.inputStream;
-      input.onData = ()  => print(decodeUtf8(input.read()));
-      input.onClosed = () {
+      input..onData = (()  => print(decodeUtf8(input.read())))
+           ..onClosed = () {
         print("******************************************");
         answerCallback();
       };
@@ -101,6 +103,20 @@ class DartStoryServer {
       var error =  "Erreur. Pas un entier. $fe";
       _doAnswer(response, error);
     }
+  }
+  
+  _jajascript(HttpRequest request, HttpResponse response){
+    var buffer = new List<int>(request.contentLength);
+    var input = request.inputStream;
+    input.onData = () => input.readInto(buffer);
+    input.onClosed = () {
+      var json = new String.fromCharCodes(buffer);
+      var command = JajaCommand.parseFromJson(json);
+      var result = _optimizer.optimize(command).toJson();
+      response.headers..set(HttpHeaders.CONTENT_TYPE, "application/json");
+      print("Receive command=$json optimization=$result");
+      _doAnswer(response, result);
+    };
   }
   
 
