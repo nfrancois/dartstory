@@ -41,49 +41,49 @@ class DartStoryServer {
     _server.close();
   }
   
-  // TODO Transformer en un Future
-  _doAnswer(HttpResponse response, String content, bool close){
+  _doAnswer(HttpResponse response, String content){
     response.outputStream..writeString(content)
                          ..writeString("\n")
-                         ..flush();// Si close, le body n'a pas été encore lu
-    if(close){
-      response.outputStream.close();
-    }
+                         ..close();
   }
   
-  // TODO refacto, utiliser, un Future pour executer le _doAnswer le log est fini
-  _logRequestInfo(HttpRequest request, HttpResponse response){
-    print("************** Request Info **************");
-    print("=> Headers");
-    request.headers.forEach((key, value) => print("* key=$key : value=$value"));     
-    print("=> Parameters");
-    request.queryParameters.forEach((key, value) => print("* key=$key : value=$value"));
-    print("=> Data (size=${request.contentLength})");
-    var input = request.inputStream;
-    input.onData = ()  => print(new String.fromCharCodes(input.read()));
-    // TODO call Future de réponse.
-    input.onClosed = () => response.outputStream.close();// Il fermer la connexion
-    print("******************************************");
+  // TODO : future et afficher si size != -1 ?
+  _logRequestInfo(HttpRequest request, var answerCallback){
+    if(request.contentLength != -1){
+      print("************** Request Body **************");
+      var input = request.inputStream;
+      input.onData = ()  => print(new String.fromCharCodes(input.read()));
+      input.onClosed = () {
+        print("******************************************");
+        answerCallback();
+      };
+    } else {
+      answerCallback();
+    }
   } 
   
   /*****************   Handlers http  *****************/ 
   _serveHandler(HttpRequest request, HttpResponse response){
-    var query = request.queryParameters["q"];
-    String answer = (query == null) ? "@CodeStory with Dart" :_queryAnalyser.findAnswer(query);
-    print("Query=$query Answer=$answer");
-    _doAnswer(response,answer, true);
+    _logRequestInfo(request, () {
+      var query = request.queryParameters["q"];
+      String answer = (query == null) ? "@CodeStory with Dart" : _queryAnalyser.findAnswer(query);
+      print("Query=$query Answer=$answer");
+      _doAnswer(response,answer);
+    });
   }
   
   _enonce1(HttpRequest request, HttpResponse response){
-    _logRequestInfo(request, response);
-    response.statusCode = HttpStatus.CREATED;
-    _doAnswer(response, "OUI", false); 
+    _logRequestInfo(request, () {
+      response.statusCode = HttpStatus.CREATED;
+      _doAnswer(response, "OUI"); 
+    });
   }
   
   _enonce2(HttpRequest request, HttpResponse response){
-    _logRequestInfo(request, response);
-    response.statusCode = HttpStatus.CREATED;
-    _doAnswer(response, "NON", false);
+    _logRequestInfo(request, () {
+      response.statusCode = HttpStatus.CREATED;
+      _doAnswer(response, "OUI"); 
+    });
   }  
 
   _scalaskel(HttpRequest request, HttpResponse response){
@@ -93,10 +93,10 @@ class DartStoryServer {
       var results = _changer.change(value);
       var json = results.map((money) => money.toJson());
       print("Change $value => $json");
-      _doAnswer(response, json.toString(), true);
+      _doAnswer(response, json.toString());
     } on FormatException catch (fe) {
       var error =  "Erreur. Pas un entier. $fe";
-      _doAnswer(response, error,  true);
+      _doAnswer(response, error);
     }
   }
   
