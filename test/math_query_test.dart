@@ -20,6 +20,7 @@ main(){
     test('4.2 is "4,2"', should_convert_num_double);
     test('6.0 is "6"', should_convert_num_double_as_int);
     //test('long can be convert', should_convert_num_long_int);
+    test('operation with float', should_operate_with_float);
   });
 }
 
@@ -107,4 +108,13 @@ should_calculate_with_priority_2(){
 
   // Then
   expect(result, "5");
+}
+
+
+should_operate_with_float(){
+  // When 
+  var result = analyser.findAnswer("1,5*4");
+  
+  // Then
+  expect(result, "6");     
 }

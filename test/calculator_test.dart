@@ -9,7 +9,7 @@ main(){
   group('Calculator Tests', (){
     setUp(() => calculator = new Calculator());
     test('"1" is 1', to_num_one);
-    test('"42" is 42', to_num_forty_two);
+    test('"42" is 42', to_num_double);
     test('"1,5" is 1,5', one_is_one_and_half);
     test('1+1', add_1_and_1);
     test('1+1', add_2_and_4);
@@ -38,6 +38,7 @@ main(){
     test('parse 2*3', should_parse_multiplication);
     test('parse 4/2', should_parse_division);
     test('parse (2+3)*4/20', should_parse_operation_multi_operator);
+    test('parse 1,5*4', should_parse_float_operation);
   });  
 }
 
@@ -84,9 +85,9 @@ to_num_one(){
   expect(result, equals(1));
 }
 
-to_num_forty_two(){
+to_num_double(){
   // When
-  var result = calculator.toNum("1,5");
+  var result = calculator.toNum("1.5");
   
   // Then
   expect(result, equals(1.5));
@@ -282,13 +283,21 @@ should_not_be_parenth_but_contains(){
 // Ignore : precision is bad
 should_calculate_with_big_int(){
   // When
-  var result = calculator.parse("((1,1+2)+3,14+4+(5+6+7)+(8+9+10)*4267387833344334647677634)/2*553344300034334349999000");
+  var result = calculator.parse("((1.1+2)+3.14+4+(5+6+7)+(8+9+10)*4267387833344334647677634)/2*553344300034334349999000");
   // Then
   print(result.toInt());
   expect(result, equals(31878018903828899277492024491376690701584023926880));  
 
   //int asInt = val.toInt();
   //print("$asInt $val");
+}
+
+should_parse_float_operation(){
+  // When 
+  var result = calculator.parse("1.5*4");
+  
+  // Then
+  expect(result, 6.0);     
 }
 
 

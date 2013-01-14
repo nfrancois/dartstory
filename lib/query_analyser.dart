@@ -14,7 +14,7 @@ class QueryAnalyser {
                             "((1,1 2) 3,14 4 (5 6 7) (8 9 10)*4267387833344334647677634)/2*553344300034334349999000" : "31878018903828899277492024491376690701584023926880"
   };  
   
-  String findAnswer(String query) => (_queryAnswers.containsKey(query)) ? _queryAnswers[query] : _doOperation(query.replaceAll(" ", "+"));
+  String findAnswer(String query) => (_queryAnswers.containsKey(query)) ? _queryAnswers[query] : _doOperation(query.replaceAll(" ", "+").replaceAll(",", "."));
   
   String _doOperation(String query) {
     var result = new Calculator().parse(query);
@@ -115,8 +115,8 @@ class Calculator {
   num toNum(String s){
     num value = 0;
     try {
-      if(s.contains(",")){
-        value = double.parse(s.replaceAll(",", "."));
+      if(value is int){
+        value = double.parse(s);
       } else {
         value = int.parse(s);
       }
