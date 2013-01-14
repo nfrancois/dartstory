@@ -15,6 +15,7 @@ main(){
     test("I don't always anwers OUI", should_not_always_response_oui);
     test("Enonce 1 ok", should_have_receive_enonce1);
     test("Big calcul", big_calcul);
+    test("J ai mal dormi", mal_dormi);
   });
 }
 
@@ -73,4 +74,12 @@ big_calcul(){
   // Then
   expect(response, equals("31878018903828899277492024491376690701584023926880")); 
 
+}
+
+mal_dormi(){
+  // When
+  var response = analyser.findAnswer("As tu passe une bonne nuit malgre les bugs de l etape precedente(PAS_TOP/BOF/QUELS_BUGS)");
+  
+  // Then
+  expect(response, equals("PAS_TOP"));   
 }
