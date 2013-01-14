@@ -16,6 +16,7 @@ main(){
     test("Enonce 1 ok", should_have_receive_enonce1);
     test("Big calcul", big_calcul);
     test("J ai mal dormi", mal_dormi);
+    test("Enonce 2 ok", should_have_receive_enonce2);
   });
 }
 
@@ -62,6 +63,14 @@ should_not_always_response_oui(){
 should_have_receive_enonce1(){
   // When
   var response = analyser.findAnswer("As tu bien recu le premier enonce(OUI/NON)");
+  
+  // Then
+  expect(response, equals("OUI")); 
+}
+
+should_have_receive_enonce2(){
+  // When
+  var response = analyser.findAnswer("As tu bien recu le second enonce(OUI/NON)");
   
   // Then
   expect(response, equals("OUI")); 
