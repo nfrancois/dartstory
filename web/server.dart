@@ -2,9 +2,12 @@ library dart_story_server;
 
 import "dart:io";
 import 'dart:json';
+import 'dart:utf';
+
 //import 'package:dart_story/scalaskel.dart';
 import '../lib/scalaskel.dart';
 import '../lib/query_analyser.dart';
+
 
 var env = Platform.environment;
 
@@ -52,7 +55,7 @@ class DartStoryServer {
     if(request.contentLength != -1){
       print("************** Request Body **************");
       var input = request.inputStream;
-      input.onData = ()  => print(new String.fromCharCodes(input.read()));
+      input.onData = ()  => print(decodeUtf8(input.read()));
       input.onClosed = () {
         print("******************************************");
         answerCallback();
