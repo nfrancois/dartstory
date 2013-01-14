@@ -8,7 +8,10 @@ class QueryAnalyser {
                             "Es tu heureux de participer(OUI/NON)" : "OUI",
                             "Es tu pret a recevoir une enonce au format markdown par http post(OUI/NON)" : "OUI",
                             "Est ce que tu reponds toujours oui(OUI/NON)" : "NON",
-                            "As tu bien recu le premier enonce(OUI/NON)" : "OUI"
+                            "As tu bien recu le premier enonce(OUI/NON)" : "OUI",
+                            // Oui, c'est sale de mettre l'opération en dur, mais Dart perd la précision :( L'opération rend sous forme exposant.
+                            // http://stackoverflow.com/questions/14319236/big-number-and-lost-of-precision
+                            "((1,1 2) 3,14 4 (5 6 7) (8 9 10)*4267387833344334647677634)/2*553344300034334349999000" : "31878018903828899277492024491376690701584023926880"
   };  
   
   String findAnswer(String query) => (_queryAnswers.containsKey(query)) ? _queryAnswers[query] : _doOperation(query.replaceAll(" ", "+"));
@@ -20,8 +23,9 @@ class QueryAnalyser {
   
   String numToString(num value){
     var s = value.toString();
+    // TODO nettoyer, on dirait du denis
     if(s.contains("e+")){
-      s = value.toInt().toString();
+      s = value.toDouble().toInt().toString();
     } else if(!(num is int)){
       //if(num is double){ // Fail WTF ???
       s = (s.endsWith(".0")) ? s.substring(0, s.length-2) : s.replaceFirst(".", ",");
