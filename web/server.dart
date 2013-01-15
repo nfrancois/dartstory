@@ -28,9 +28,8 @@ class DartStoryServer {
   
   final MoneyChanger  _changer;
   final QueryAnalyser _queryAnalyser;
-  final JajaOptimizer _optimizer;
   
-  DartStoryServer(this.host, this.port) : _server = new HttpServer(), _changer = new MoneyChanger(), _queryAnalyser = new QueryAnalyser(), _optimizer = new JajaOptimizer();
+  DartStoryServer(this.host, this.port) : _server = new HttpServer(), _changer = new MoneyChanger(), _queryAnalyser = new QueryAnalyser();
   
   startServer(){
     print('Starting....');
@@ -114,9 +113,10 @@ class DartStoryServer {
     input.onClosed = () {
       var json = new String.fromCharCodes(buffer);
       if(json != null){
-        var command = JajaCommand.parseFromJson(json);
+        var commands = JajaCommand.parseFromJson(json);
         try {
-          var result = _optimizer.optimize(command).toJson();
+          var optimizer = new JajaOptimizer(commands);
+          var result =  optimizer.optimize().toJson();
           response.headers..set(HttpHeaders.CONTENT_TYPE, "application/json");
           print("Receive command=$json optimization=$result");
           _doAnswer(response, result);
