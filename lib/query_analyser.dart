@@ -13,7 +13,7 @@ class QueryAnalyser {
                             // http://stackoverflow.com/questions/14319236/big-number-and-lost-of-precision
                             "((1,1 2) 3,14 4 (5 6 7) (8 9 10)*4267387833344334647677634)/2*553344300034334349999000" : "31878018903828899277492024491376690701584023926880",
                             "As tu passe une bonne nuit malgre les bugs de l etape precedente(PAS_TOP/BOF/QUELS_BUGS)" : "PAS_TOP", // Grrr maudise perte de précision
-                            "As tu bien recu le second enonce(OUI/NON)" : "NON"// TODO test
+                            "As tu bien recu le second enonce(OUI/NON)" : "OUI"
   };  
   
   String findAnswer(String query) => (_queryAnswers.containsKey(query)) ? _queryAnswers[query] : _doOperation(query.replaceAll(" ", "+").replaceAll(",", "."));
@@ -23,16 +23,11 @@ class QueryAnalyser {
     return numToString(result);
   }
   
-  String numToString(num value){
+  // TODO private
+  String numToString(double value){
     var s = value.toString();
-    // TODO nettoyer, on dirait du denis
-    if(s.contains("e+")){
-      s = value.toDouble().toInt().toString();
-    } else if(!(num is int)){
-      //if(num is double){ // Fail WTF ???
-      s = (s.endsWith(".0")) ? s.substring(0, s.length-2) : s.replaceFirst(".", ",");
-    }
-    return s;
+    // Formattage spécial FR + conversion éventuelle en int
+    return (s.endsWith(".0")) ? s.substring(0, s.length-2) : s.replaceFirst(".", ",");
 }
   
   
@@ -41,7 +36,6 @@ class QueryAnalyser {
 const MULT_OPERATOR = "*";
 const String ADD_OPERATOR = "+";
 const String DIV_OPERATOR = "/";
-const _UNKNOWN_QUERY = "Unknown query";
 
 class Operation {
  
@@ -59,7 +53,7 @@ class Calculator {
   
   Calculator();
   
-  num parse(String query){
+  double parse(String query){
     if(isInParenth(query)){
       return parse(query.substring(1, query.length-1));
     }
@@ -74,7 +68,7 @@ class Calculator {
     return doOperation(operation);    
   }
   
-  // TODO Retourner opérateur ou null
+  // TODO private
   int indexOfSeparationOperator(String query){
     var parentLevel = 0;
     var bestOp = -1;
@@ -95,6 +89,7 @@ class Calculator {
     return bestOp;    
   }
   
+  // TODO private  
   bool isInParenth(String query){
     bool startAndStopInParenth = query[0] == "(" && query[query.length-1] == ")";
     if(!startAndStopInParenth){
@@ -115,21 +110,18 @@ class Calculator {
     return true;
   }
   
-  num toNum(String s){
-    num value = 0;
+  // TODO private  
+  double toNum(String s){
     try {
-      if(value is int){
-        value = double.parse(s);
-      } else {
-        value = int.parse(s);
-      }
+      return double.parse(s);
     } on FormatException catch (fe) {
-      print("Erreur. Pas un entier. $fe");
+      print("Erreur : Pas un nombre. $fe");
+      return  0.0;
     }    
-    return  value;
   }
   
-  num doOperation(Operation o){
+  // TODO private  
+  double doOperation(Operation o){
     switch(o.operator){
       case MULT_OPERATOR:
         return multiply(o.a, o.b);
@@ -139,11 +131,11 @@ class Calculator {
         return divide(o.a, o.b);        
     }
   }
-  
+  // TODO private
   num add(num a, num b) => a+b;
-  
+  // TODO private
   num multiply(num a, num b) => a*b;
-
+  // TODO private
   num divide(num a, num b) => b==0 ? 0 : a/b; 
 }
 

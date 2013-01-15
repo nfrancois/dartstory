@@ -26,7 +26,7 @@ main(){
 
 should_convert_num_int(){
   // When
-  String result = analyser.numToString(42);
+  String result = analyser.numToString(42.0);
   
   // Then
   expect(result, "42");   
