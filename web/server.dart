@@ -3,6 +3,8 @@ library dart_story_server;
 import "dart:io";
 import 'dart:utf';
 
+import 'dart:json';
+
 //import 'package:dart_story/scalaskel.dart';
 import '../lib/scalaskel.dart';
 import '../lib/query_analyser.dart';
@@ -52,7 +54,7 @@ class DartStoryServer {
                          ..close();
   }
   
-  // TODO : future et afficher si size != -1 ?
+  // TODO : future ?
   _logRequestInfo(HttpRequest request, var answerCallback){
     if(request.contentLength != -1){
       print("************** Request Body **************");
@@ -111,11 +113,23 @@ class DartStoryServer {
     input.onData = () => input.readInto(buffer);
     input.onClosed = () {
       var json = new String.fromCharCodes(buffer);
-      var command = JajaCommand.parseFromJson(json);
-      var result = _optimizer.optimize(command).toJson();
-      response.headers..set(HttpHeaders.CONTENT_TYPE, "application/json");
-      print("Receive command=$json optimization=$result");
-      _doAnswer(response, result);
+      if(json != null){
+        var command = JajaCommand.parseFromJson(json);
+        try {
+          var result = _optimizer.optimize(command).toJson();
+          response.headers..set(HttpHeaders.CONTENT_TYPE, "application/json");
+          print("Receive command=$json optimization=$result");
+          _doAnswer(response, result);
+        } on JSONParseException catch(e){// TODO faire des exceptions fonctionnelle ?
+          var error = "JSon tout pourri $e";
+          print(error);
+          response.statusCode = HttpStatus.BAD_REQUEST;
+          _doAnswer(response, error);
+        }
+      } else {
+        response.statusCode = HttpStatus.BAD_REQUEST;
+        _doAnswer(response, "Et le JSon il est où ?");
+      }
     };
   }
   

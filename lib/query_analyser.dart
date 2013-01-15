@@ -13,7 +13,7 @@ class QueryAnalyser {
                             // http://stackoverflow.com/questions/14319236/big-number-and-lost-of-precision
                             "((1,1 2) 3,14 4 (5 6 7) (8 9 10)*4267387833344334647677634)/2*553344300034334349999000" : "31878018903828899277492024491376690701584023926880",
                             "As tu passe une bonne nuit malgre les bugs de l etape precedente(PAS_TOP/BOF/QUELS_BUGS)" : "PAS_TOP", // Grrr maudise perte de précision
-                            "As tu bien recu le second enonce(OUI/NON)" : "OUI"
+                            "As tu bien recu le second enonce(OUI/NON)" : "NON"// TODO test
   };  
   
   String findAnswer(String query) => (_queryAnswers.containsKey(query)) ? _queryAnswers[query] : _doOperation(query.replaceAll(" ", "+").replaceAll(",", "."));
@@ -25,12 +25,15 @@ class QueryAnalyser {
   
   String numToString(num value){
     var s = value.toString();
-    if(!(num is int)){
+    // TODO nettoyer, on dirait du denis
+    if(s.contains("e+")){
+      s = value.toDouble().toInt().toString();
+    } else if(!(num is int)){
       //if(num is double){ // Fail WTF ???
       s = (s.endsWith(".0")) ? s.substring(0, s.length-2) : s.replaceFirst(".", ",");
     }
     return s;
-   }
+}
   
   
 }
