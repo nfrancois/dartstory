@@ -34,7 +34,14 @@ class JajaOptimization {
 class JajaOptimizer {
   
   JajaOptimization optimize(List<JajaCommand> commands){
-    return new JajaOptimization(commands[0].prix, [commands[0].vol]);
+    // Solution naive on enchaine les vols
+    var gainTotal = 0;
+    var paths = [];
+    commands.forEach((command) {
+      gainTotal += command.prix;
+      paths.add(command.vol);
+    });
+    return new JajaOptimization(gainTotal, paths);
   }
   
 }

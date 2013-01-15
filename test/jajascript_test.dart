@@ -11,7 +11,7 @@ main(){
     test("Render to JSon a result", should_convert_optimization_to_json);
     test("Parse simple command", should_parse_simple_command);
     test('When 1 element, easy solution', should_have_one_solution);
-    
+    test('2 vols consecutif', should_chain_fly);
  });
 }
 
@@ -55,4 +55,17 @@ should_have_one_solution(){
   expect(optim, isNotNull);
   expect(optim.gain, 10);
   expect(optim.path, equals(["AF514"]));
+}
+
+should_chain_fly(){
+  // Given
+  var command = [new JajaCommand("AF1", 0, 1, 10), new JajaCommand("AF2", 1, 1, 10)]; 
+
+  // When
+  var optim = _optimizer.optimize(command);
+  
+  // Then
+  expect(optim, isNotNull);
+  expect(optim.gain, 20);
+  expect(optim.path, equals(["AF1", "AF2"]));
 }
