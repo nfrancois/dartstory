@@ -115,8 +115,11 @@ class DartStoryServer {
       if(json != null){
         var commands = JajaCommand.parseFromJson(json);
         try {
+          Stopwatch stopwatch = new Stopwatch()..start();
           var optimizer = new JajaOptimizer(commands);
           var result =  optimizer.optimize().toJson();
+          stopwatch.stop();
+          print("*** Tmp=${stopwatch.elapsedMilliseconds}");
           response.headers..set(HttpHeaders.CONTENT_TYPE, "application/json");
           print("Receive command=$json optimization=$result");
           _doAnswer(response, result);
