@@ -37,12 +37,10 @@ class JajaCommand {
 }
 
 class JajaOptimization {
-  int gain;
-  final Queue<String> path;
+  final int gain;
+  final Queue<String> path;// TODO list
   
-  JajaOptimization.empty() : path = new DoubleLinkedQueue(){
-    gain = 0;
-  }
+  JajaOptimization.empty() : gain = 0, path = new DoubleLinkedQueue();
   
   JajaOptimization(this.gain, this.path);
   
@@ -57,10 +55,17 @@ class JajaOptimizer {
   final List<JajaCommand> commands;
   final List<JajaCommand> _allPaths = [];
   final Map<JajaCommand, List<JajaCommand>> _nexts;
+  final Map<String, JajaOptimization> _optimCache = {};
   
   JajaOptimizer(this.commands): _nexts =  new Map<JajaCommand, List<JajaCommand>>();
   
   JajaOptimization optimize(){
+    _findAllPath();
+    // Trouver les meilleurs
+    return _findBestFromPath();
+  }
+  
+  void _findAllPath(){
     // TODO idée générer moins de paths
     // Ex : AF1 -> AF2 -> AF3
     //      AF1 -> AF3 <=== Ne pas générer
@@ -82,15 +87,15 @@ class JajaOptimizer {
           maybeNext.hasPrevious = true;
         }
       }
-    }
-    // Trouver les meilleurs
-    
-    //print("****** ${allPaths.length}");
+    }    
+  }
+  
+  JajaOptimization _findBestFromPath(){
     JajaOptimization bestOptim = new JajaOptimization.empty();
     var bestGain = 0;
-    for(JajaCommand command in _allPaths){
-      var start = command;
-      var currentGain = command.prix;
+    _allPaths.forEach((start) {
+      //var start = command;
+      var currentGain = start.prix;
       //print(">Depart=${start.vol} | suivants=${next[start]}");
       var currentOptim = new JajaOptimization.empty();
       //var currentOptim = new JajaOptimization(start.prix, []);
@@ -101,20 +106,28 @@ class JajaOptimizer {
       }
       // TODO ajouter le début + gain racine
       //print(">>>>>optim = $bestOptimFromCurrent");
-    }
-    return bestOptim;
+    });
+    return bestOptim;   
   }
   
   JajaOptimization _findBest(JajaCommand toExplore){
     //print("**Explore=${toExplore.vol}");
+    if(_optimCache.containsKey(toExplore.vol)){
+      //print("${toExplore.vol} from cache ==> ${_optimCache[toExplore.vol]}");
+      return _optimCache[toExplore.vol];
+    }
     var toExploreNexts = _nexts[toExplore];
     // print("**toExploreNexts=$toExploreNexts");
     if(toExploreNexts.isEmpty){// Destination finale
       //print("Fin de chemin ${toExplore.prix}");
-      return new JajaOptimization(toExplore.prix, new Queue.from([toExplore.vol]));
+      var optim = new JajaOptimization(toExplore.prix, new Queue.from([toExplore.vol]));
+      //print("${toExplore.vol} in cache ==> $optim");
+      _optimCache[toExplore.vol] = optim;
+      return optim;
     } else {
       var bestNextGain = 0;
       var bestNextOptim =  new JajaOptimization.empty();
+      // TODO un find ?
       toExploreNexts.forEach((nextCommand) {
         var actualNextOptim =_findBest(nextCommand);
         //print("--->Explore=${toExplore.vol} actual=${actualNextOptim.gain} best=$bestNextGain");
@@ -124,9 +137,13 @@ class JajaOptimizer {
         }
       });
       //print("**********bestNextOptim = $bestNextOptim");
-      bestNextOptim.gain += toExplore.prix;
-      bestNextOptim.path.addFirst(toExplore.vol);
-      return bestNextOptim;
+      var newGain = bestNextOptim.gain + toExplore.prix;
+      var newPath = new Queue.from(bestNextOptim.path);
+      newPath.addFirst(toExplore.vol);
+      var optim = new JajaOptimization(newGain, newPath);
+      //print("${toExplore.vol} in cache ==> $optim");
+      _optimCache[toExplore.vol] = optim;      
+      return optim;
     }
   }
   

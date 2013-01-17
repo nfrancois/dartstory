@@ -14,9 +14,9 @@ main(){
     test('When 1 element, easy solution', should_have_one_solution);
     test('2 vols consecutif', should_chain_fly);
     test('2 vols avec conflits', should_choice_better_fly_in_2);
-    test('2 vols avec conflits', should_accept_2_of_3);
     test("Question de l'énoncé", enonce_sample);
     test('3 vols ', should_accept_all_3);
+    test('2 vols avec conflits', should_accept_2_of_3);
  });
 }
 
@@ -164,14 +164,14 @@ should_accept_all_3(){
 
 should_accept_2_of_3(){
   // Given
-  var command = [new JajaCommand("AF1", 0, 1, 2),  new JajaCommand("AF2", 0, 1, 2), new JajaCommand("AF3", 2, 1, 6)]; 
+  var command = [new JajaCommand("AF1", 0, 1, 4),  new JajaCommand("AF2", 0, 1, 2), new JajaCommand("AF3", 2, 1, 6)]; 
 
   // When
   var optim = new JajaOptimizer(command).optimize();
   
   // Then
   expect(optim, isNotNull);
-  expect(optim.gain, 8);
+  expect(optim.gain, 10);
   expect(optim.path, equals(["AF1", "AF3"]));   
 }
 
