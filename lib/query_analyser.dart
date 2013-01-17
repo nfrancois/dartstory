@@ -13,7 +13,8 @@ class QueryAnalyser {
                             // http://stackoverflow.com/questions/14319236/big-number-and-lost-of-precision
                             "((1,1 2) 3,14 4 (5 6 7) (8 9 10)*4267387833344334647677634)/2*553344300034334349999000" : "31878018903828899277492024491376690701584023926880",
                             "As tu passe une bonne nuit malgre les bugs de l etape precedente(PAS_TOP/BOF/QUELS_BUGS)" : "PAS_TOP", // Grrr maudise perte de précision
-                            "As tu bien recu le second enonce(OUI/NON)" : "OUI"
+                            "As tu bien recu le second enonce(OUI/NON)" : "OUI",
+                            "As tu copie le code de ndeloof(OUI/NON/JE_SUIS_NICOLAS)":"NON"
   };  
   
   String findAnswer(String query) => (_queryAnswers.containsKey(query)) ? _queryAnswers[query] : _doOperation(query.replaceAll(" ", "+").replaceAll(",", "."));

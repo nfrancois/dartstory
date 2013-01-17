@@ -17,6 +17,7 @@ main(){
     test("Big calcul", big_calcul);
     test("J ai mal dormi", mal_dormi);
     test("Enonce 2 ok", should_have_receive_enonce2);
+    test("Copier c'est mal", copy_is_bad);
   });
 }
 
@@ -91,4 +92,12 @@ mal_dormi(){
   
   // Then
   expect(response, equals("PAS_TOP"));   
+}
+
+copy_is_bad(){
+  // When
+  var response = analyser.findAnswer("As tu copie le code de ndeloof(OUI/NON/JE_SUIS_NICOLAS)");
+  
+  // Then
+  expect(response, equals("NON"));     
 }
