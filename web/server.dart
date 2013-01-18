@@ -124,7 +124,12 @@ class DartStoryServer {
         print(error);
         response.statusCode = HttpStatus.BAD_REQUEST;
         _doAnswer(response, error);
-      }      
+      } on Exception catch(e){
+        var error = "Erreur technique. $e";
+        print(error);
+        response.statusCode = HttpStatus.BAD_REQUEST;
+        _doAnswer(response, error);       
+      }
     };
   }
   
