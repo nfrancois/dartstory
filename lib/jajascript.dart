@@ -60,12 +60,16 @@ class JajaOptimizer {
   JajaOptimizer(this.commands): _nexts =  new Map<JajaCommand, List<JajaCommand>>();
   
   JajaOptimization optimize(){
-    _findAllPath();
-    // Trouver les meilleurs
-    return _findBestFromPath();
+    return _algov1();
   }
   
-  void _findAllPath(){
+  JajaOptimization _algov1(){
+    _findAllPath();
+    return _findBestFromPath();   
+  }
+  
+  
+  _findAllPath(){
     // TODO idée générer moins de paths
     // Ex : AF1 -> AF2 -> AF3
     //      AF1 -> AF3 <=== Ne pas générer
