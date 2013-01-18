@@ -106,35 +106,40 @@ class DartStoryServer {
     }
   }
   
+  // TODO utiliser un Future pour lire le body et le ré-utiliser
   _jajascript(HttpRequest request, HttpResponse response){
     var buffer = new StringBuffer();
     var input = request.inputStream;
     input.onData = () => buffer.add(new String.fromCharCodes(input.read()));
     input.onClosed = () {
-      var json = buffer.toString();
-      if(json != null){
-        var commands = JajaCommand.parseFromJson(json);
-        try {
-          Stopwatch stopwatch = new Stopwatch()..start();
-          var optimizer = new JajaOptimizer(commands);
-          var result =  optimizer.optimize().toJson();
-          stopwatch.stop();
-          print("*** Tmp=${stopwatch.elapsedMilliseconds}");
-          response.headers..set(HttpHeaders.CONTENT_TYPE, "application/json");
-          print("Receive command=$json optimization=$result");
-          _doAnswer(response, result);
-        } on JSONParseException catch(e){// TODO faire des exceptions fonctionnelle ?
-          var error = "JSon tout pourri $e";
-          print(error);
-          response.statusCode = HttpStatus.BAD_REQUEST;
-          _doAnswer(response, error);
-        }
-      } else {
+      try {
+        var json = buffer.toString();
+        var optim = _doJajaOptim(json);
+        var jsonOptiom = optim.toJson();
+        response.headers..set(HttpHeaders.CONTENT_TYPE, "application/json");
+        print("Receive command=$json optimization=jsonOptiom");
+        _doAnswer(response, jsonOptiom);
+      } on JSONParseException catch(e){// TODO faire des exceptions fonctionnelle ?
+        var error = "JSon tout pourri $e";
+        print(error);
         response.statusCode = HttpStatus.BAD_REQUEST;
-        _doAnswer(response, "Et le JSon il est où ?");
-      }
+        _doAnswer(response, error);
+      }      
     };
   }
   
-
+   JajaOptimization _doJajaOptim(String json){
+    var optim = null;
+    Stopwatch stopwatch = new Stopwatch()..start();
+    if(json.isEmpty){
+      return new JajaOptimization.empty();
+    } else {
+      var commands = JajaCommand.parseFromJson(json);
+      var optimizer = new JajaOptimizer(commands);
+      return optimizer.optimize();
+    }
+    stopwatch.stop();
+    print("*** Tmp=${stopwatch.elapsedMilliseconds}");    
+  }
+  
 }
