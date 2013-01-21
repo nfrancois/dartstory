@@ -117,7 +117,7 @@ class DartStoryServer {
         var optim = _doJajaOptim(json);
         var jsonOptiom = optim.toJson();
         response.headers..set(HttpHeaders.CONTENT_TYPE, "application/json");
-        print("Receive command=$json optimization=jsonOptiom");
+        //print("Receive command=$json optimization=jsonOptiom");
         _doAnswer(response, jsonOptiom);
       } on JSONParseException catch(e){// TODO faire des exceptions fonctionnelle ?
         var error = "JSon tout pourri $e";
@@ -140,6 +140,7 @@ class DartStoryServer {
       return new JajaOptimization.empty();
     } else {
       var commands = JajaCommand.parseFromJson(json);
+      print("Receive command. Size=${commands.length}");
       var optimizer = new JajaOptimizer(commands);
       return optimizer.optimize();
     }
