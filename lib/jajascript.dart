@@ -9,6 +9,7 @@ class JajaCommand {
   final int prix;
   
   bool hasPrevious = false;
+  bool hasAfter = false;
   
   JajaCommand(this.vol, this.depart, this.duree, this.prix);
   
@@ -55,21 +56,34 @@ class JajaOptimizer {
   final List<JajaCommand> commands;
   final List<JajaCommand> _allPaths = [];
   final Map<JajaCommand, List<JajaCommand>> _nexts;
+  final Map<JajaCommand, List<JajaCommand>> _previous;
   final Map<String, JajaOptimization> _optimCache = {};
   
-  JajaOptimizer(this.commands): _nexts =  new Map<JajaCommand, List<JajaCommand>>();
+  JajaOptimizer(this.commands): _nexts =  new Map<JajaCommand, List<JajaCommand>>(), _previous =  new Map<JajaCommand, List<JajaCommand>>();
   
   JajaOptimization optimize(){
     return _algov1();
   }
   
+  JajaOptimization _algov2(){
+    var lenght = commands.length;
+    for(int i=lenght-1; i>1; i--){
+      JajaCommand current = commands[i];
+      if(!current.hasAfter){// Le chemin n'est pas encore exploré
+        _allPaths.add(current);
+      }      
+    }
+  }
+  
   JajaOptimization _algov1(){
+    print("Algo v1");
     _findAllPath();
     return _findBestFromPath();   
   }
   
   
   _findAllPath(){
+    print("Find paths");
     // TODO idée générer moins de paths
     // Ex : AF1 -> AF2 -> AF3
     //      AF1 -> AF3 <=== Ne pas générer
@@ -91,10 +105,12 @@ class JajaOptimizer {
           maybeNext.hasPrevious = true;
         }
       }
-    }    
+    }  
+    print("All paths=${_allPaths.length}");
   }
   
   JajaOptimization _findBestFromPath(){
+    print("Find best path}");
     JajaOptimization bestOptim = new JajaOptimization.empty();
     var bestGain = 0;
     _allPaths.forEach((start) {
@@ -109,7 +125,7 @@ class JajaOptimizer {
         bestGain = bestOptim.gain;
       }
       // TODO ajouter le début + gain racine
-      //print(">>>>>optim = $bestOptimFromCurrent");
+      print(">>>>>optim = $bestOptimFromCurrent");
     });
     return bestOptim;   
   }
