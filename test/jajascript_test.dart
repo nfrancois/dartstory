@@ -18,6 +18,7 @@ main(){
     test('3 vols ', should_accept_all_3);
     test('2 vols avec conflits', should_accept_2_of_3);
     test('Une grosse requete venant de mes logs heroku', request_15);
+    test('Enchevrés', multi_conflits);
  });
 }
 
@@ -204,4 +205,18 @@ request_15(){
   expect(optim.path, equals(["gigantic-yardage-94","sleepy-map-91","upset-saxophonist-98","innocent-volt-76","worried-resistance-62","frantic-stutterer-95","enchanting-ape-8","busy-moose-22","weary-violinist-38","clear-spouse-40","silly-kneecap-20","tiny-roadrunner-58","bloody-pecan-43","disturbed-turquoise-42","testy-trefoil-49","foolish-yardage-8"]));
   optim.toJson();
   
+}
+
+
+multi_conflits(){
+  // Given
+  var command = [new JajaCommand("MONAD42", 0, 1, 10), new JajaCommand("META18", 1, 3, 10), new JajaCommand("LEGACY01", 2, 5, 1), new JajaCommand("YAGNI17", 4, 6, 10)]; 
+
+  // When
+  var optim = new JajaOptimizer(command).optimize();
+  
+  // Then
+  expect(optim, isNotNull);
+  expect(optim.gain, 30);
+  expect(optim.path, equals(["MONAD42","META18", "YAGNI17"])); 
 }
